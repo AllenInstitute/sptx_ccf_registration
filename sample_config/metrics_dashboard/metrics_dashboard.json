@@ -1,16 +1,16 @@
 {
-    "registration_output_json": "/mnt/g/datasets/RegIterN_10iters_segmented_refactored4_patchedv2_mouse3_v2/registration_output.json",
-    "out_path": "/mnt/g/datasets/RegIterN_10iters_segmented_refactored4_patchedv2_mouse3_v2/",
+    "registration_output_json": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/RegIterN_10iters_sptx_ccf_registration_patchedv2_mouse3_v2/registration_output.json",
+    "out_path": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/RegIterN_10iters_sptx_ccf_registration_patchedv2_mouse3_v2/",
     "ccf_files": {
-        "full": "/home/mike/workspace/data/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFFullGlobWarpedNN.nii.gz",
-        "atlas": "/home/mike/workspace/data/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFAtlasGlobWarped.nii.gz",
-        "broad": "/home/mike/workspace/data/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFGlobWarpedNN.nii.gz",
-        "landmark": "/home/mike/workspace/data/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFLandmarksGlobWarpedNN_v2.nii.gz"
+        "full": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFFullGlobWarpedNN.nii.gz",
+        "atlas": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFAtlasGlobWarped.nii.gz",
+        "broad": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFGlobWarpedNN.nii.gz",
+        "landmark": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFLandmarksGlobWarpedNN_v2.nii.gz"
     },
     "label_paths": {
-        "full": "/home/mike/workspace/data/20230425_registration_input/itksnap_label_description.txt",
-        "broad": "/home/mike/workspace/data/20230425_registration_input/itksnap_region_label_file.txt",
-        "landmark": "/home/mike/workspace/data/20230425_registration_input/itksnap_ccf_landmark_file.txt"
+        "full": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/20230425_registration_input/itksnap_label_description.txt",
+        "broad": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/20230425_registration_input/itksnap_region_label_file.txt",
+        "landmark": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/20230425_registration_input/itksnap_ccf_landmark_file.txt"
     },
-    "tmp_dir": "/home/mike/workspace/data/scratch"
+    "tmp_dir": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/scratch"
 }
