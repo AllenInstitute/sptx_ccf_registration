@@ -2,6 +2,7 @@ import json
 import logging
 from multiprocessing import Pool
 from pathlib import Path
+import sys
 
 import ants
 import nibabel as nib
@@ -17,7 +18,8 @@ from sptx_ccf_registration.segmentation.segment import SegmentSlice
 from sptx_ccf_registration.segmentation.utils import get_alpha_range
 from sptx_ccf_registration.utils.file_processing import alpha_to_str, parse_itksnap_file
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO,
+                    stream=sys.stdout)
 logger = logging.getLogger(__name__)
 
 
@@ -163,8 +165,7 @@ class Segmentation(ArgSchemaParser):
         segmented_labels.view()[:] = 0
 
         save_selected_alpha = optimize_alpha is not False or alpha_selection is not None
-        if save_selected_alpha:
-            selected_alpha = {}
+        selected_alpha = {}
 
         z_dim = unsegmented_data.shape[2]
 
@@ -187,6 +188,9 @@ class Segmentation(ArgSchemaParser):
             Segmentation.create_segment_qc_cache(
                 unsegmented_data, alpha_range, cache_dir
             )
+        else:
+            alpha_qc_dir = None
+            cache_dir = None
 
         for z in range(z_dim):
             result = pool.apply_async(
