@@ -5,7 +5,7 @@
         "unsegmented_label_file": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/Mouse3/Mouse3LabelsOrig_Landmarks_patched_v2.nii.gz",
         "ccf_file": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFLandmarksGlobWarpedNN_v2.nii.gz",
         "itksnap_file_path": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/20230425_registration_input/itksnap_ccf_landmark_file.txt",
-        "alpha_selection_path": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/out/Mouse3_Landmark_patched_v2_alpha_selection_all.json"
+        "alpha_selection_path": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/Mouse3/Mouse3_Landmark_patched_v2_alpha_selection_all.json"
     },
     "optimize_alpha": true,
     "save_alpha_qc": true

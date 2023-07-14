@@ -2,7 +2,7 @@
     "output_name": "mouse3_v2",
     "output_path": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/RegIterN_10iters_sptx_ccf_registration_patchedv2_mouse3_v2/",
     "merfish_files": {
-        "labels_broad_segmented": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/Mouse3/Mouse3LabelsSegmented_patched.nii.gz",
+        "labels_broad_segmented": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/Mouse3/Mouse3Labels_patched_segmented.nii.gz",
         "labels_landmark_segmented": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/Mouse3/Mouse3Labels_Landmarks_patched_v2_segmented.nii.gz",
         "labels_broad_unsegmented": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/Mouse3/Mouse3LabelsOrig.nii.gz",
         "labels_landmark_unsegmented": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/Mouse3/Mouse3LabelsOrig_Landmarks.nii.gz",
