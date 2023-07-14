@@ -198,66 +198,6 @@ def metrics_df_z_slices(
     )
     return df
 
-
-def coarse_fine_metric_comparison(
-    df_coarse_metrics: pd.DataFrame,
-    df_fine_metrics: pd.DataFrame,
-) -> pd.DataFrame:
-    """Generate a dataframe comparing the coarse and fine overlap metrics
-
-    Parameters
-    ----------
-    df_coarse_metrics : pd.DataFrame
-        A dataframe containing the coarse overlap metrics.
-    df_fine_metrics : pd.DataFrame
-        A dataframe containing the fine overlap metrics.
-
-    Returns
-    -------
-    pd.DataFrame
-        A dataframe comparing the coarse and fine overlap metrics.
-    """
-
-    df = df_coarse_metrics.copy()
-    df = df.rename(
-        columns={
-            "dice coefficient": "dice: coarse",
-            "MERFISH area (pixels)": "MERFISH area (pixels): coarse",
-            "intersection": "intersection: coarse",
-            "intersection / MERFISH area": "intersection / MERFISH area: coarse",
-        }
-    )
-    df = pd.merge(
-        df, df_fine_metrics, on=["label", "structure", "z-slice", "CCF area (pixels)"]
-    )
-    df = df.rename(
-        columns={
-            "dice coefficient": "dice: fine",
-            "MERFISH area (pixels)": "MERFISH area (pixels): fine",
-            "intersection": "intersection: fine",
-            "intersection / MERFISH area": "intersection / MERFISH area: fine",
-        }
-    )
-    df["intersection / MERFISH area: delta"] = (
-        df["intersection / MERFISH area: fine"]
-        - df["intersection / MERFISH area: coarse"]
-    )
-    df["intersection / MERFISH area: % change"] = (
-        np.round(
-            df["intersection / MERFISH area: delta"]
-            / df["intersection / MERFISH area: coarse"],
-            5,
-        )
-        * 100
-    )
-    df["dice: delta"] = df["dice: fine"] - df["dice: coarse"]
-    df["dice: % change"] = (
-        np.round(((df["dice: fine"] - df["dice: coarse"]) / df["dice: coarse"]), 5) * 100
-    )
-    df = df.iloc[:, [0, 1, 2, 4, 3, 8, 5, 9, 6, 10, 12, 13, 7, 11, 14, 15]]
-    return df
-
-
 # Generate overlap_metrics output
 def get_nii_path(tag, config):
     for dat in config["ccf"]:
