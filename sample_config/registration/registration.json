@@ -1,0 +1,32 @@
+{
+    "output_name": "mouse3_v2",
+    "output_path": "/mnt/g/datasets/RegIterN_10iters_segmented_refactored4_patchedv2_mouse3_v2/",
+    "merfish_files": {
+        "labels_broad_segmented": "/home/mike/workspace/data/Mouse3_v2_regapped/Mouse3/Mouse3LabelsSegmented_patched_alpha0.3.nii.gz",
+        "labels_landmark_segmented": "/home/mike/workspace/data/Mouse3_v2_regapped/Mouse3/Mouse3LabelsSegmented_Landmarks_patched_alpha_manualselection_argmin_density_5.nii.gz",
+        "labels_broad_unsegmented": "/home/mike/workspace/data/Mouse3_v2_regapped/Mouse3/Mouse3LabelsOrig.nii.gz",
+        "labels_landmark_unsegmented": "/home/mike/workspace/data/Mouse3_v2_regapped/Mouse3/Mouse3LabelsOrig_Landmarks.nii.gz",
+        "stack": "/home/mike/workspace/data/Mouse3_v2_regapped/Mouse3/Mouse3stacked.nii.gz",
+        "right_hemisphere": "/home/mike/workspace/data/Mouse3_v2_regapped/Mouse3/merfish_right_hemisphere_v2.nii.gz"
+    },
+    "ccf_files": {
+        "labels_broad": "/home/mike/workspace/data/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFGlobWarpedNN.nii.gz",
+        "labels_landmark": "/home/mike/workspace/data/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFLandmarksGlobWarpedNN_v2.nii.gz",
+        "right_hemisphere": "/home/mike/workspace/data/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFRHemiGlobWarped.nii.gz",
+        "atlas": "/home/mike/workspace/data/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFAtlasGlobWarped.nii.gz"
+    },
+    "labels_level": [0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+    "labels_replace_to": [1, -1, 1, 1, 1, 1, 1, 1, 1, 1],
+    "iteration_labels": [
+        [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
+        [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
+        [72, 73],
+        [74],
+        [75, 76],
+        [113, 114],
+        [84],
+        [79],
+        [123, 54, 64, 121, 120, 78, 94],
+        [124]
+    ]
+}

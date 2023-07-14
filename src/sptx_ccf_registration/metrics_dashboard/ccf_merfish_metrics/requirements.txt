@@ -1,0 +1,6 @@
+Flask
+pandas
+plotly
+markdown
+beautifulsoup4
+lxml

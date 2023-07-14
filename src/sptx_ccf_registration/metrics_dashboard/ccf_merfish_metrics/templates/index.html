@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Cumulative Change in Dice Coefficient vs Iteration</title>
+</head>
+<body>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" id="broad-segmented-tab" data-bs-toggle="tab" href="#broad-segmented">Broad-Segmented</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="landmark-segmented-tab" data-bs-toggle="tab" href="#landmark-segmented">Landmark-Segmented</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="broad-unsegmented-tab" data-bs-toggle="tab" href="#broad-unsegmented">Broad-Unsegmented</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="landmark-unsegmented-tab" data-bs-toggle="tab" href="#landmark-unsegmented">Landmark-Unsegmented</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane" id="broad-segmented">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="tab-pane" id="landmark-segmented">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="tab-pane" id="broad-unsegmented">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="tab-pane" id="landmark-unsegmented">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+    {{ text | safe }}
+    <script>
+        function loadPlot(tabId, plotType) {
+            $.get("/plot/" + plotType, function(data) {
+                $("#" + tabId).html(data);
+            });
+        }
+
+        $(".nav-link").on("click", function() {
+            let tabId = $(this).attr("href").substring(1);
+            let plotType = tabId.replace("-", "_");
+            loadPlot(tabId, plotType);
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
+

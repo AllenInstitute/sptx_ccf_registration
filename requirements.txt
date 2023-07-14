@@ -1,0 +1,7 @@
+numpy
+pandas
+argschema
+antspyx
+alphashape
+rasterio
+neuroglancer_formatting_scripts @ git+https://github.com/AllenInstitute/neuroglancer_formatting_scripts.git@prototype.230711#egg=neuroglancer_formatting_scripts

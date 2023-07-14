@@ -1,0 +1,10 @@
+{
+    "input_paths": {
+        "unsegmented_label_file": "/home/mike/workspace/data/Mouse3_v2_regapped/Mouse3/Mouse3LabelsOrig_patched.nii.gz",
+        "itksnap_file_path": "/home/mike/workspace/data/20230425_registration_input/itksnap_region_label_file.txt",
+        "ccf_file": "/home/mike/workspace/data/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFGlobWarpedNN.nii.gz"
+    },
+    "output_dir": "/home/mike/workspace/data/Mouse3_v2_regapped/Mouse3",
+    "segmented_label_output_file": "Mouse3Labels_patched_segmented_alpha0.20.nii.gz",
+    "save_alpha_qc": true
+}
