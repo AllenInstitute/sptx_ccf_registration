@@ -1,8 +1,8 @@
 import json
 import logging
+import sys
 from multiprocessing import Pool
 from pathlib import Path
-import sys
 
 import ants
 import nibabel as nib
@@ -18,8 +18,7 @@ from sptx_ccf_registration.segmentation.segment import SegmentSlice
 from sptx_ccf_registration.segmentation.utils import get_alpha_range
 from sptx_ccf_registration.utils.file_processing import alpha_to_str, parse_itksnap_file
 
-logging.basicConfig(level=logging.INFO,
-                    stream=sys.stdout)
+logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger(__name__)
 
 

@@ -1,8 +1,6 @@
 import logging
 
 import numpy as np
-from alphashape import alphashape
-from rasterio.features import rasterize
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -40,34 +38,3 @@ def get_alpha_range(
 
     alpha_range = np.array(alpha_values)
     return alpha_range
-
-
-def label_points_to_binary_mask(
-    label_points: np.ndarray, alpha: float, y_dim: int, x_dim: int
-):
-    """
-    Use alphashape to generate a concave hull around the points and
-    convert it to a binary mask.
-
-    Parameters
-    ----------
-    label_points : numpy.ndarray
-        The points to be segmented by concave hull
-
-    Returns
-    -------
-    numpy.ndarray
-        The binary mask of the polygons.
-    """
-    # Generate concave hull
-    try:
-        alpha_shape = alphashape(label_points, alpha)
-    except:
-        logger.warning("Could not compute concave hull")
-        return None
-    # Convert to binary mask
-    if not alpha_shape.is_empty:
-        mask = rasterize([(alpha_shape, 1)], out_shape=(y_dim, x_dim))
-    else:
-        return None
-    return mask.T

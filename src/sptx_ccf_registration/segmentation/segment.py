@@ -1,14 +1,14 @@
 import logging
+from functools import cached_property
 from typing import Dict
 
 import numpy as np
+from alphashape import alphashape
+from rasterio.features import rasterize
 from scipy.ndimage import gaussian_filter
 from skimage.morphology import binary_closing, disk
 
-from sptx_ccf_registration.segmentation.utils import (
-    get_alpha_range,
-    label_points_to_binary_mask,
-)
+from sptx_ccf_registration.segmentation.utils import get_alpha_range
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -80,16 +80,11 @@ class SegmentSlice:
         self.alpha_selection = alpha_selection
         self.alpha_range = get_alpha_range(min_alpha, max_alpha)
         self.sigma = sigma
-        self._unique_labels = None
-        self._unique_labels_ccf = None
-        self._z_label_to_alpha = None
-        self._max_density_labels = None
         self.default_alpha = default_alpha
         self.optimize_alpha = optimize_alpha
         self.min_alpha = min_alpha
         self.max_alpha = max_alpha
         self.min_points = min_points
-        self._segmented_labels_slice = None
         self.force_binary_closing = force_binary_closing
         self.radius = radius
         self.z = z
@@ -106,25 +101,25 @@ class SegmentSlice:
         else:
             self.alpha_selection = alpha_selection
 
-    @property
+    @cached_property
     def unique_labels(self) -> np.ndarray:
         """
         Get unique labels, ignoring 0 and len(label) < min_points
         """
-        if self._unique_labels is None:
-            unique_labels = np.unique(self.labels[self.labels != 0])
-            self._unique_labels = [
-                label
-                for label in unique_labels
-                if len(self.labels[self.labels == label]) > self.min_points
-            ]
-        return self._unique_labels
+        unique_labels = np.unique(self.labels[self.labels != 0])
+        return [
+            label
+            for label in unique_labels
+            if len(self.labels[self.labels == label]) > self.min_points
+        ]
 
-    @property
+    @cached_property
     def unique_labels_ccf(self) -> np.ndarray:
-        if self._unique_labels_ccf is None and self.ccf_slice is not None:
-            self._unique_labels_ccf = np.unique(self.ccf_slice[self.ccf_slice != 0])
-        return self._unique_labels_ccf
+        """
+        Get unique labels from CCF slice, ignoring 0
+        """
+        if self.ccf_slice is not None:
+            return np.unique(self.ccf_slice[self.ccf_slice != 0])
 
     def find_optimal_alpha(self, label: int) -> float:
         """
@@ -147,7 +142,7 @@ class SegmentSlice:
         if ccf_area != 0:
             label_points = self.points[self.labels == label]
             for alpha in self.alpha_range:
-                mask = label_points_to_binary_mask(
+                mask = SegmentSlice._label_points_to_binary_mask(
                     label_points, alpha, self.y_dim, self.x_dim
                 )
                 if mask is not None:
@@ -158,7 +153,7 @@ class SegmentSlice:
                         best_alpha = alpha
         return best_alpha
 
-    @property
+    @cached_property
     def z_label_to_alpha(self) -> Dict:
         """
         Create a dictionary mapping (z, label) to alpha value.
@@ -174,24 +169,27 @@ class SegmentSlice:
         Dict
             Dictionary mapping (z, label) to alpha value.
         """
-        if self._z_label_to_alpha is None:
-            self._z_label_to_alpha = {}
-
-            for label in self.unique_labels:
+        z_label_to_alpha = {}
+        for label in self.unique_labels:
+            best_alpha = self.default_alpha
+            if self.force_binary_closing:
+                best_alpha = "dilated"
+            elif len(self.alpha_selection) > 0:
+                if self.alpha_selection.get(str((self.z, label))):
+                    best_alpha = self.alpha_selection[str((self.z, label))]
+                    if isinstance(best_alpha, str) and best_alpha != "dilated":
+                        raise ValueError(
+                            f"alpha_selection for label {label} is not a valid"
+                            "alpha value [float | 'dilated']"
+                        )
+            else:
                 best_alpha = self.default_alpha
-                if self.force_binary_closing:
-                    best_alpha = "dilated"
-                elif self.alpha_selection is not None:
-                    if self.alpha_selection.get(str((self.z, label))):
-                        best_alpha = self.alpha_selection[str((self.z, label))]
-                else:
-                    best_alpha = self.default_alpha
-                    if self.optimize_alpha:
-                        best_alpha = self.find_optimal_alpha(label)
-                self._z_label_to_alpha[str((self.z, label))] = best_alpha
-        return self._z_label_to_alpha
+                if self.optimize_alpha:
+                    best_alpha = self.find_optimal_alpha(label)
+            z_label_to_alpha[str((self.z, label))] = best_alpha
+        return z_label_to_alpha
 
-    @property
+    @cached_property
     def max_density_labels(self) -> np.ndarray:
         """
         Max density labels for each pixel in the 2D slice.
@@ -207,28 +205,55 @@ class SegmentSlice:
             The 2D slice of integer labels (w x h) where each pixel indicates the
             label with the max density at that pixel
         """
+        kde_stack = []
+        for label in self.unique_labels:
+            mask = (self.unsegmented_labels_slice == label).astype(
+                float
+            )  # Convert to float
+            kde = gaussian_filter(mask, sigma=self.sigma)
+            kde_stack.append(kde)
 
-        if self._max_density_labels is None:
-            kde_stack = []
-            for label in self.unique_labels:
-                mask = (self.unsegmented_labels_slice == label).astype(
-                    float
-                )  # Convert to float
-                kde = gaussian_filter(mask, sigma=self.sigma)
-                kde_stack.append(kde)
+        kde_stack = np.stack(kde_stack)
+        kde_stack_argmax = np.argmax(kde_stack, axis=0)
+        kde_stack_max = np.max(kde_stack, axis=0)
+        zero_density_positions = kde_stack_max == 0
+        kde_stack_argmax[zero_density_positions] = -1
+        label_map = {i: label for i, label in enumerate(self.unique_labels)}
+        label_map[-1] = 0
+        return np.vectorize(label_map.get)(kde_stack_argmax)
 
-            kde_stack = np.stack(kde_stack)
-            kde_stack_argmax = np.argmax(kde_stack, axis=0)
-            kde_stack_max = np.max(kde_stack, axis=0)
-            zero_density_positions = kde_stack_max == 0
-            kde_stack_argmax[zero_density_positions] = -1
-            label_map = {i: label for i, label in enumerate(self.unique_labels)}
-            label_map[-1] = 0
-            self._max_density_labels = np.vectorize(label_map.get)(kde_stack_argmax)
+    @staticmethod
+    def _label_points_to_binary_mask(
+        label_points: np.ndarray, alpha: float, y_dim: int, x_dim: int
+    ):
+        """
+        Use alphashape to generate a concave hull around the points and
+        convert it to a binary mask.
 
-        return self._max_density_labels
+        Parameters
+        ----------
+        label_points : numpy.ndarray
+            The points to be segmented by concave hull
 
-    @property
+        Returns
+        -------
+        numpy.ndarray
+            The binary mask of the polygons.
+        """
+        # Generate concave hull
+        try:
+            alpha_shape = alphashape(label_points, alpha)
+        except:
+            logger.warning("Could not compute concave hull")
+            return None
+        # Convert to binary mask
+        if not alpha_shape.is_empty:
+            mask = rasterize([(alpha_shape, 1)], out_shape=(y_dim, x_dim))
+        else:
+            return None
+        return mask.T
+
+    @cached_property
     def segmented_labels_slice(self) -> np.ndarray:
         """
         Segment the 2D slice by concave hull and/or binary_closing for each label.
@@ -238,26 +263,27 @@ class SegmentSlice:
         numpy.ndarray
             The 2D slice of segmented integer labels (w x h)
         """
-        if self._segmented_labels_slice is None:
-            self._segmented_labels_slice = np.zeros_like(self.unsegmented_labels_slice)
-            for label in self.unique_labels:
-                label_points = self.points[self.labels == label]
-                alpha = self.z_label_to_alpha[str((self.z, label))]
-                if alpha == "dilated":
-                    mask = binary_closing(
-                        self.unsegmented_labels_slice == label, disk(self.radius)
-                    )
-                else:
-                    mask = label_points_to_binary_mask(
-                        label_points, alpha, self.y_dim, self.x_dim
-                    )
-                if mask is not None:
-                    not_overlap_mask = (mask == 1) & (self._segmented_labels_slice == 0)
-                    overlap_max_density_mask = (
-                        (mask == 1)
-                        & (self._segmented_labels_slice != 0)
-                        & (self.max_density_labels == label)
-                    )
-                    self._segmented_labels_slice[not_overlap_mask] = label
-                    self._segmented_labels_slice[overlap_max_density_mask] = label
-        return self._segmented_labels_slice
+        segmented_labels_slice = np.zeros_like(
+            self.unsegmented_labels_slice, dtype=np.uint8
+        )
+        for label in self.unique_labels:
+            label_points = self.points[self.labels == label]
+            alpha = self.z_label_to_alpha[str((self.z, label))]
+            if alpha == "dilated":
+                mask = binary_closing(
+                    self.unsegmented_labels_slice == label, disk(self.radius)
+                )
+            else:
+                mask = SegmentSlice._label_points_to_binary_mask(
+                    label_points, alpha, self.y_dim, self.x_dim
+                )
+            if mask is not None:
+                not_overlap_mask = (mask == 1) & (segmented_labels_slice == 0)
+                overlap_max_density_mask = (
+                    (mask == 1)
+                    & (segmented_labels_slice != 0)
+                    & (self.max_density_labels == label)
+                )
+                segmented_labels_slice[not_overlap_mask] = label
+                segmented_labels_slice[overlap_max_density_mask] = label
+        return segmented_labels_slice
