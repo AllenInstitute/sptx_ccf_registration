@@ -55,21 +55,21 @@ class TestRegistration(unittest.TestCase):
     def setUp(self):
         self.reg = Registration(**self.args)
 
-    def test_get_registration_params(self):
-        assert self.reg.get_registration_params(0) == ("SyN", (40, 20, 10), None)
-        assert self.reg.get_registration_params(1) == (
+    def test___get_registration_params(self):
+        assert self.reg.__get_registration_params(0) == ("SyN", (40, 20, 10), None)
+        assert self.reg.__get_registration_params(1) == (
             "SyNOnly",
             (40, 20, 10),
             "Identity",
         )
-        assert self.reg.get_registration_params(2) == (
+        assert self.reg.__get_registration_params(2) == (
             "SyNOnly",
             (70, 40, 20),
             "Identity",
         )
 
     def test_read_images(self):
-        merfish_images = self.reg.read_images(self.reg.merfish_files)
+        merfish_images = self.reg.__read_images(self.reg.merfish_files)
         for key in self.reg.merfish_files.keys():
             assert isinstance(merfish_images[key], ants.core.ANTsImage)
 
@@ -79,7 +79,7 @@ class TestRegistration(unittest.TestCase):
         not_empty_img = np.ones((5, 5))
         assert self.reg.is_empty(not_empty_img) is False
 
-    def test_select_images_and_labels(self):
+    def test___select_images_and_labels(self):
         merfish_images = {
             k: nib.load(str(v)).get_fdata()
             for k, v in self.args["merfish_files"].items()
@@ -89,7 +89,7 @@ class TestRegistration(unittest.TestCase):
         }
 
         for iteration in range(10):  # assuming there are 10 iterations
-            selected_images = self.reg.select_images_and_labels(
+            selected_images = self.reg.__select_images_and_labels(
                 iteration, merfish_images, ccf_images
             )
 
@@ -111,17 +111,17 @@ class TestRegistration(unittest.TestCase):
                     expected_labels = set(self.reg.iteration_labels[iteration] + [0])
                     self.assertTrue(set(unique_labels).issubset(expected_labels))
 
-    def test_handle_empty_merfish_slice(self):
+    def test___handle_empty_merfish_slice(self):
         mock_merfish_slice = np.zeros((5, 5))
         mock_ccf_slice = np.array([[0, 1, 0], [0, 1, 0], [0, 1, 0]])
-        merfish_slice, ccf_slice = self.reg.handle_empty_merfish_slice(
+        merfish_slice, ccf_slice = self.reg.__handle_empty_merfish_slice(
             mock_merfish_slice, mock_ccf_slice
         )
         assert (merfish_slice == mock_ccf_slice).all()
         assert (ccf_slice == mock_ccf_slice).all()
 
-    def test_get_transform_path(self):
-        result = self.reg.get_transform_path(10, 1, "SYN")
+    def test___get_transform_path(self):
+        result = self.reg.__get_transform_path(10, 1, "SYN")
         assert "iter1" in result
         assert "slice_transformations" in result
         assert "test_SYN_slice10" in result
@@ -163,7 +163,7 @@ class TestRegistration(unittest.TestCase):
 
                     # Create another temp directory for shutil.move
                     with tempfile.TemporaryDirectory() as tmpdir2:
-                        self.reg.get_transform_path = MagicMock(
+                        self.reg.__get_transform_path = MagicMock(
                             return_value=Path(tmpdir2) / "transform.mat"
                         )
                         self.reg.create_transforms_slice(
