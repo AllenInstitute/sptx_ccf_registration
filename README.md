@@ -27,7 +27,7 @@ sptx_ccf_registration is an image processing pipeline for registering spatial tr
 5. For Neuroglancer, obtain AWS credentials and export to your environment
 
 ## Usage
-For detailed usage instructions, see the README.md file in each respective module in `src/<module_name>`  
+For detailed usage instructions, see the documentation for individual modules in `docs`  
 
 You can use the following commands to get help on the input params for each module:
 ```
