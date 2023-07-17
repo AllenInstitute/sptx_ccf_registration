@@ -7,10 +7,7 @@ import ants
 import nibabel as nib
 import numpy as np
 
-from sptx_ccf_registration.registration.registration import (
-    Registration,
-    TransformType,
-)
+from sptx_ccf_registration.registration.registration import Registration, TransformType
 
 
 class TestRegistration(unittest.TestCase):

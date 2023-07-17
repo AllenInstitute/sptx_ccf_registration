@@ -203,14 +203,14 @@ def metrics_df_z_slices(
 def get_nii_path(tag: str, config: dict) -> str:
     """
     Get the path to the nii file for a given tag.
-    
+
     Parameters
     ----------
     tag : str
         The tag for the nii file.
     config : dict
         The config dictionary.
-    
+
     Returns
     -------
     str
@@ -224,14 +224,14 @@ def get_nii_path(tag: str, config: dict) -> str:
 def get_label_path(tag: str, config: dict) -> str:
     """
     Get the path to the itksnap label file for a given tag.
-    
+
     Parameters
     ----------
     tag : str
         The tag for the nii file.
     config : dict
         The config dictionary.
-    
+
     Returns
     -------
     str

@@ -43,7 +43,7 @@ class Registration:
         """
         Initialize the Registration class.
 
-        This class handles the registration process for neuroimaging data. It takes 
+        This class handles the registration process for neuroimaging data. It takes
         input files, performs image transformations, and saves the output.
 
         Parameters:
@@ -57,7 +57,7 @@ class Registration:
         ccf_files (Dict):
             A dictionary containing the paths of the CCF data files.
         labels_level (Tuple[int]):
-            A tuple containing the label levels. 
+            A tuple containing the label levels.
         labels_replace_to (Tuple[int]):
             A tuple defining the values to which the original labels will be mapped.
         iteration_labels (Tuple[Tuple[int]]):
@@ -92,7 +92,7 @@ class Registration:
         -----------
         iteration (int):
             The iteration number
-        
+
         Returns:
         --------
         Tuple[str, Tuple[int], str]:
@@ -114,12 +114,12 @@ class Registration:
 
     def __read_images(self, files) -> Dict[ants.ANTsImage]:
         """Reads images from given files
-        
+
         Parameters:
         -----------
         files (Dict):
             A dictionary containing the paths of the files to be read
-        
+
         Returns:
         --------
         Dict[ants.ANTsImage]:
@@ -127,10 +127,12 @@ class Registration:
         """
         return {key: ants.image_read(value) for key, value in files.items()}
 
-    def __select_images_and_labels(self, iteration, merfish_images, ccf_images) -> Dict[ants.ANTsImage]:
+    def __select_images_and_labels(
+        self, iteration, merfish_images, ccf_images
+    ) -> Dict[ants.ANTsImage]:
         """Select images and labels based on iteration for estimating
         registration affine and warp params
-        
+
         Parameters:
         -----------
         iteration (int):
@@ -139,11 +141,11 @@ class Registration:
             A dictionary containing the MERFISH images
         ccf_images (Dict):
             A dictionary containing the CCF images
-            
+
         Returns:
         --------
         Dict[ants.ANTsImage]:
-            A dictionary containing the selected, 
+            A dictionary containing the selected,
             subsetted, merged, and right hemisphere transformed images
         """
         selected_images = {}
@@ -177,12 +179,12 @@ class Registration:
 
     def is_empty(self, img_slice: np.ndarray) -> bool:
         """Check if slice is empty
-        
+
         Parameters:
         -----------
         img_slice (np.ndarray):
             The image slice to be checked
-            
+
         Returns:
         --------
         bool:
@@ -190,8 +192,9 @@ class Registration:
         """
         return img_slice.sum() == 0
 
-    def __handle_empty_merfish_slice(self, merfish_slice: np.ndarray,
-                                   ccf_slice: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    def __handle_empty_merfish_slice(
+        self, merfish_slice: np.ndarray, ccf_slice: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Check if slc is empty, if so simulate an identity transform
         TODO: we need some better logic for this in the future
 
@@ -212,10 +215,11 @@ class Registration:
             merfish_slice = ccf_slice
         return merfish_slice, ccf_slice
 
-    def __get_transform_path(self, z: int, iteration:int,
-                           transform_type: TransformSubType) -> str:
+    def __get_transform_path(
+        self, z: int, iteration: int, transform_type: TransformSubType
+    ) -> str:
         """Get path to transform file
-        
+
         Parameters:
         -----------
         z (int):
@@ -224,7 +228,7 @@ class Registration:
             The iteration number
         transform_type (TransformSubType):
             The type of transform
-            
+
         Returns:
         --------
         str:
@@ -244,12 +248,12 @@ class Registration:
 
     def __get_iteration_output_path(self, iteration: int) -> str:
         """Get path to iteration output
-        
+
         Parameters:
         -----------
         iteration (int):
             The iteration number
-        
+
         Returns:
         --------
         str:
@@ -262,12 +266,12 @@ class Registration:
 
     def __get_slice_output_path(self, iteration: int) -> str:
         """Get path to slice output
-        
+
         Parameters:
         -----------
         iteration (int):
             The iteration number
-        
+
         Returns:
         --------
         str:
@@ -281,14 +285,14 @@ class Registration:
 
     def __get_merfish_label_output_path(self, iteration: int, label_name: str) -> str:
         """Get path to merfish label output
-        
+
         Parameters:
         -----------
         iteration (int):
             The iteration number
         label_name (str):
             The name of the label
-            
+
         Returns:
         --------
         str:
@@ -305,7 +309,7 @@ class Registration:
     ) -> None:
         """Registration between merfish and ccf slices, outputs affine and warp
         transforms that's stored to output_path/iter{iteration}/slice_transformations
-        
+
         Parameters:
         -----------
         iteration (int):
@@ -314,7 +318,7 @@ class Registration:
             The MERFISH slice selected for registration (moving image)
         ccf_slice (np.ndarray):
             The CCF slice selected for registration (fixed image)
-        
+
         Returns:
         --------
         None
@@ -322,7 +326,9 @@ class Registration:
         merfish_slice, ccf_slice = self.__handle_empty_merfish_slice(
             merfish_slice, ccf_slice
         )
-        trans_type, iter_lvl, initial_transform = self.__get_registration_params(iteration)
+        trans_type, iter_lvl, initial_transform = self.__get_registration_params(
+            iteration
+        )
 
         registration = ants.registration(
             fixed=ants.from_numpy(ccf_slice),
@@ -372,7 +378,7 @@ class Registration:
         selected_images (Dict):
             A dictionary containing the selected images for
             registration (mFish and CCF)
-        
+
         Returns:
         --------
         None
@@ -481,7 +487,7 @@ class Registration:
     ) -> Tuple[Dict[ants.ANTsImage], Dict[str]]:
         """Apply transform to merfish images, save transformed images to
         output_path/iter{iteration}
-        
+
         Parameters:
         -----------
         iteration (int):
@@ -490,7 +496,7 @@ class Registration:
             A dictionary containing the MERFISH images
         ccf_image (ants.ANTsImage):
             The CCF image
-            
+
         Returns:
         --------
         Tuple[Dict[ants.ANTsImage], Dict[str]]:
@@ -520,7 +526,7 @@ class Registration:
         self, iteration: int, selected_images: Dict
     ) -> None:
         """Apply transformations to selected labels
-        
+
         Parameters:
         -----------
         iteration (int):
@@ -528,7 +534,7 @@ class Registration:
         selected_images (Dict):
             A dictionary containing the selected images for
             registration (mFish and CCF)
-            
+
         Returns:
         --------
         None
