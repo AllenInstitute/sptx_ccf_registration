@@ -10,7 +10,7 @@ setup(
     name="sptx_ccf_registration",
     version="0.1.0",
     description="Registration pipeline of SPTx data to the Allen CCF. Includes"
-                "preprocessing, registration, and posthoc analysis steps.",
+    "preprocessing, registration, and posthoc analysis steps.",
     author="Mike Huang, Min Chen",
     author_email="mike.huang@alleninstitute.org",
     url="https://github.com/AllenInstitute/sptx_ccf_registration",

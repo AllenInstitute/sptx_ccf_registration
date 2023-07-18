@@ -38,6 +38,11 @@ class RegistrationRunner(ArgSchemaParser):
         labels_level = self.args["labels_level"]
         labels_replace_to = self.args["labels_replace_to"]
         iteration_labels = self.args["iteration_labels"]
+        n_processes = self.args["n_processes"]
+
+        if n_processes == -1:
+            n_processes = os.cpu_count()
+
         os.makedirs(output_path, exist_ok=True)
 
         reg_obj = Registration(
@@ -48,6 +53,7 @@ class RegistrationRunner(ArgSchemaParser):
             labels_level,
             labels_replace_to,
             iteration_labels,
+            n_processes,
         )
         output_dict = reg_obj.register()
 

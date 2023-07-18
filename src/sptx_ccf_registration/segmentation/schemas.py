@@ -61,3 +61,7 @@ class SegmentationSchema(ArgSchema):
         "of concave hull. All concave hull related parameters will be ignored",
     )
     seed = Int(default=2021, description="Seed for random number generator.")
+    n_processes = Int(
+        default=-1,
+        description="Number of processes to use." "If -1, use all available cores.",
+    )

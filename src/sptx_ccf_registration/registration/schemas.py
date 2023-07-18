@@ -73,3 +73,7 @@ class RegistrationSchema(ArgSchema):
         required=True,
         description="Labels to use at each iteration of registration",
     )
+    n_processes = Int(
+        default=-1,
+        description="Number of processes to use." "If -1, use all available cores.",
+    )

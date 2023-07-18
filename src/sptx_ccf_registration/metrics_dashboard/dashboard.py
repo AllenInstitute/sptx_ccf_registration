@@ -1,7 +1,6 @@
 import json
 import multiprocessing as mp
 import re
-import shlex
 import subprocess
 from functools import partial
 from pathlib import Path
@@ -147,7 +146,9 @@ def _process_iter(
     return metrics_df_iter
 
 
-def compute_metrics(config_file_paths: List[str], outpath: Union[str, Path]) -> None:
+def compute_metrics(
+    config_file_paths: List[str], outpath: Union[str, Path], n_processes: int = -1
+) -> None:
     """
     Compute metrics for each iteration and aggregate the results.
 
@@ -157,6 +158,7 @@ def compute_metrics(config_file_paths: List[str], outpath: Union[str, Path]) -> 
         A list of paths to the configuration files.
     outpath (Union[str, Path]):
         The path to the output directory.
+    cpu_count (int, optional):
     """
     num_iter = len(config_file_paths)
 
@@ -178,7 +180,11 @@ def compute_metrics(config_file_paths: List[str], outpath: Union[str, Path]) -> 
         "dice coefficient",
     ]
 
-    pool = mp.Pool(mp.cpu_count())
+    if n_processes == -1:
+        n_processes = mp.cpu_count()
+    else:
+        n_processes = min(n_processes, num_iter)
+    pool = mp.Pool(n_processes)
 
     for tag in tags:
         process_iter_with_fixed_params = partial(
@@ -232,10 +238,24 @@ def run_neuroglancer_formatting(
         The prefix of the bucket path. Defaults to "scratch/transpose".
     """
     for iter, config_file_path in enumerate(config_file_paths):
-        command = f"python -m neuroglancer_interface.registration_visualization.visualize \
-                    --tmp_dir {tmp_dir}\
-                    --bucket_prefix {bucket_prefix} \
-                    --n_processors {n_processors} \
-                    --config_path {config_file_path} \
-                    --output_path {out_path}/neuroglancer_iter{iter}.html"
-        subprocess.run(shlex.split(command))
+        command = [
+            "python",
+            "-m",
+            "neuroglancer_interface.registration_visualization.visualize",
+            "--tmp_dir",
+            str(tmp_dir),
+            "--bucket_prefix",
+            bucket_prefix,
+            "--n_processors",
+            str(n_processors),
+            "--config_path",
+            str(config_file_path),
+            "--output_path",
+            f"{out_path}/neuroglancer_iter{iter}.html",
+        ]
+
+        try:
+            subprocess.run(command, check=True)
+        except subprocess.CalledProcessError:
+            print(f"Error running command: {' '.join(command)}")
+            raise

@@ -6,14 +6,14 @@ from pathlib import Path
 
 from argschema import ArgSchemaParser
 
-from sptx_ccf_registration.metrics_dashboard.schemas import (
-    GenerateMetricsDashboardOutputSchema,
-    GenerateMetricsDashboardSchema,
-)
-from sptx_ccf_registration.metrics_dashboard.utils import (
+from sptx_ccf_registration.metrics_dashboard.dashboard import (
     compute_metrics,
     create_format_configs_from_inputs,
     run_neuroglancer_formatting,
+)
+from sptx_ccf_registration.metrics_dashboard.schemas import (
+    GenerateMetricsDashboardOutputSchema,
+    GenerateMetricsDashboardSchema,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -45,8 +45,10 @@ class GenerateMetricsDashboard(ArgSchemaParser):
         out_path = Path(self.args["out_path"])
         label_paths = self.args["label_paths"]
         tmp_dir = Path(self.args["tmp_dir"])
-        n_processors = self.args["n_processors"]
+        n_processes = self.args["n_processes"]
 
+        if n_processes == -1:
+            n_processes = os.cpu_count()
         if (
             os.environ.get("AWS_ACCESS_KEY_ID") is None
             or os.environ.get("AWS_SECRET_ACCESS_KEY") is None
@@ -57,9 +59,6 @@ class GenerateMetricsDashboard(ArgSchemaParser):
                 " https://docs.aws.amazon.com/cli/latest/userguide/"
                 "cli-configure-envvars.html for more information."
             )
-
-        if n_processors == -1:
-            n_processors = os.cpu_count()
 
         os.makedirs(out_path, exist_ok=True)
 
@@ -88,7 +87,7 @@ class GenerateMetricsDashboard(ArgSchemaParser):
         compute_metrics(config_file_paths, data_path)
 
         run_neuroglancer_formatting(
-            config_file_paths, neuroglancer_path, tmp_dir, n_processors
+            config_file_paths, neuroglancer_path, tmp_dir, n_processes
         )
 
         self.args["output_json"] = str(out_path / "dashboard_output.json")

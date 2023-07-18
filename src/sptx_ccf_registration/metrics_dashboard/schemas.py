@@ -31,7 +31,7 @@ class GenerateMetricsDashboardSchema(ArgSchema):
         description="Path to temporary scratch directory for"
         "storing processed neuroglancer formatted images",
     )
-    n_processors = Int(
+    n_processes = Int(
         default=-1,
         description="Number of processors to use for"
         "multiprocessing. -1 uses all available processors.",

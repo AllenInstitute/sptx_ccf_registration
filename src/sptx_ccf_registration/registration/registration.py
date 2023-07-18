@@ -39,6 +39,7 @@ class Registration:
         labels_level: Tuple[int],
         labels_replace_to: Tuple[int],
         iteration_labels: Tuple[Tuple[int]],
+        n_processes: int = cpu_count(),
     ):
         """
         Initialize the Registration class.
@@ -54,8 +55,14 @@ class Registration:
             The path where the output files will be stored.
         merfish_files (Dict):
             A dictionary containing the paths of the MERFISH data files.
+            The keys required are:
+            'labels_broad_segmented', 'labels_landmark_segmented',
+            'labels_broad_unsegmented', 'labels_landmark_unsegmented',
+            'stack', and 'right_hemisphere'.
         ccf_files (Dict):
-            A dictionary containing the paths of the CCF data files.
+            A dictionary containing the paths of the CCF data files
+            The keys required are:
+            'labels_broad', 'labels_landmark', and 'right_hemisphere'.
         labels_level (Tuple[int]):
             A tuple containing the label levels.
         labels_replace_to (Tuple[int]):
@@ -67,12 +74,15 @@ class Registration:
         self.output_path = output_path
         self.merfish_files = merfish_files
         self.ccf_files = ccf_files
+        self.__validate_merfish_and_ccf_files()
         self.labels_level = labels_level
         self.labels_replace_to = labels_replace_to
         self.iteration_labels = iteration_labels
         self.slice_transform_dir_name = "slice_transformations"
+        self.n_processes = n_processes
         os.makedirs(self.output_path, exist_ok=True)
 
+        self.merfish_files
         self.merfish_label_type_to_interpolator_type = {
             "labels_broad_segmented": InterpolatorType.NEAREST_NEIGHBOR.value,
             "labels_landmark_segmented": InterpolatorType.NEAREST_NEIGHBOR.value,
@@ -82,7 +92,48 @@ class Registration:
             "right_hemisphere": InterpolatorType.LINEAR.value,
         }
 
-    def __get_registration_params(self, iteration: int) -> Tuple[str, Tuple[int], str]:
+    def __validate_merfish_and_ccf_files(self) -> None:
+        """
+        Validate the MERFISH and CCF files.
+        """
+        merfish_files_valid_keys = [
+            "labels_broad_segmented",
+            "labels_landmark_segmented",
+            "labels_broad_unsegmented",
+            "labels_landmark_unsegmented",
+            "stack",
+            "right_hemisphere",
+        ]
+        for key in self.merfish_files.keys():
+            if key not in merfish_files_valid_keys:
+                raise ValueError(
+                    f"Invalid key {key} in merfish_files. Check schema for valid keys"
+                )
+            merfish_files_valid_keys.remove(key)
+        if len(merfish_files_valid_keys) > 0:
+            raise ValueError(
+                f"Missing keys {merfish_files_valid_keys} in merfish_files."
+                "Check schema for valid keys"
+            )
+
+        ccf_files_valid_keys = [
+            "labels_broad",
+            "labels_landmark",
+            "right_hemisphere",
+        ]
+        for key in self.ccf_files.keys():
+            if key not in ccf_files_valid_keys:
+                raise ValueError(
+                    f"Invalid key {key} in ccf_files. Check schema for valid keys"
+                )
+            ccf_files_valid_keys.remove(key)
+        if len(ccf_files_valid_keys) > 0:
+            raise ValueError(
+                f"Missing keys {ccf_files_valid_keys} in ccf_files."
+                "Check schema for valid keys"
+            )
+
+    def _get_registration_params(self, iteration: int) -> Tuple[str, Tuple[int], str]:
         """Get registration parameters based on iteration
             1. trans_type: The type of transformation to be used
             2. iter_lvl: The number of iterations to be used
@@ -112,7 +163,7 @@ class Registration:
             initial_transform = "Identity"
         return trans_type, iter_lvl, initial_transform
 
-    def __read_images(self, files) -> Dict[ants.ANTsImage]:
+    def _read_images(self, files) -> Dict[str, ants.ANTsImage]:
         """Reads images from given files
 
         Parameters:
@@ -122,14 +173,14 @@ class Registration:
 
         Returns:
         --------
-        Dict[ants.ANTsImage]:
+        Dict[str, ants.ANTsImage]:
             A dictionary containing the read images
         """
-        return {key: ants.image_read(value) for key, value in files.items()}
+        return {key: ants.image_read(str(value)) for key, value in files.items()}
 
-    def __select_images_and_labels(
+    def _select_images_and_labels(
         self, iteration, merfish_images, ccf_images
-    ) -> Dict[ants.ANTsImage]:
+    ) -> Dict[str, ants.ANTsImage]:
         """Select images and labels based on iteration for estimating
         registration affine and warp params
 
@@ -144,7 +195,7 @@ class Registration:
 
         Returns:
         --------
-        Dict[ants.ANTsImage]:
+        Dict[str, ants.ANTsImage]:
             A dictionary containing the selected,
             subsetted, merged, and right hemisphere transformed images
         """
@@ -192,7 +243,7 @@ class Registration:
         """
         return img_slice.sum() == 0
 
-    def __handle_empty_merfish_slice(
+    def _handle_empty_merfish_slice(
         self, merfish_slice: np.ndarray, ccf_slice: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
         """Check if slc is empty, if so simulate an identity transform
@@ -215,7 +266,7 @@ class Registration:
             merfish_slice = ccf_slice
         return merfish_slice, ccf_slice
 
-    def __get_transform_path(
+    def _get_transform_path(
         self, z: int, iteration: int, transform_type: TransformSubType
     ) -> str:
         """Get path to transform file
@@ -323,10 +374,10 @@ class Registration:
         --------
         None
         """
-        merfish_slice, ccf_slice = self.__handle_empty_merfish_slice(
+        merfish_slice, ccf_slice = self._handle_empty_merfish_slice(
             merfish_slice, ccf_slice
         )
-        trans_type, iter_lvl, initial_transform = self.__get_registration_params(
+        trans_type, iter_lvl, initial_transform = self._get_registration_params(
             iteration
         )
 
@@ -360,7 +411,7 @@ class Registration:
             transform_type = transform_type.value
             transform_key = transform_type_to_key[transform_type]
             transform_index = transform_type_to_index[transform_type]
-            transform_path = self.__get_transform_path(z, iteration, transform_type)
+            transform_path = self._get_transform_path(z, iteration, transform_type)
             shutil.move(registration[transform_key][transform_index], transform_path)
 
     def __parallel_create_transforms_slice(self, args) -> None:
@@ -394,7 +445,7 @@ class Registration:
 
         num_slices = selected_images["mFish"].view().shape[-1]
 
-        pool = Pool(processes=cpu_count())
+        pool = Pool(processes=self.n_processes)
 
         args = [
             (
@@ -453,17 +504,17 @@ class Registration:
             if trans_type == TransformType.SYNONLY.value:
                 invert_array = [False]
                 transform_list = [
-                    self.__get_transform_path(
+                    self._get_transform_path(
                         z, iteration, TransformSubType.FORWARD_DEFORMATION.value
                     )
                 ]
             else:
                 invert_array = [False, False]
                 transform_list = [
-                    self.__get_transform_path(
+                    self._get_transform_path(
                         z, iteration, TransformSubType.FORWARD_DEFORMATION.value
                     ),
-                    self.__get_transform_path(
+                    self._get_transform_path(
                         z, iteration, TransformSubType.FORWARD_AFFINE.value
                     ),
                 ]
@@ -484,7 +535,7 @@ class Registration:
 
     def transform_merfish_images(
         self, iteration: int, merfish_images: Dict, ccf_image: ants.ANTsImage
-    ) -> Tuple[Dict[ants.ANTsImage], Dict[str]]:
+    ) -> Tuple[Dict[str, ants.ANTsImage], Dict[str, str]]:
         """Apply transform to merfish images, save transformed images to
         output_path/iter{iteration}
 
@@ -499,11 +550,11 @@ class Registration:
 
         Returns:
         --------
-        Tuple[Dict[ants.ANTsImage], Dict[str]]:
+        Tuple[Dict[str, ants.ANTsImage], Dict[str, str]]:
             A tuple containing the transformed MERFISH images and the paths
             to the transformed images
         """
-        trans_type, _, __ = self.__get_registration_params(iteration)
+        trans_type, _, __ = self._get_registration_params(iteration)
         transformed_image_paths = {}
         for merfish_label_name in merfish_images.keys():
             transformed_image_paths[
@@ -543,7 +594,7 @@ class Registration:
         selected_images_output_path = os.path.join(
             iteration_output_path, "merfish_selLabels_WarpedAllSlc.nii.gz"
         )
-        trans_type, _, __ = self.__get_registration_params(iteration)
+        trans_type, _, __ = self._get_registration_params(iteration)
         _ = self.apply_slice_transforms(
             iteration,
             selected_images["mFish"],
@@ -554,11 +605,11 @@ class Registration:
         )
 
     def register(self) -> None:
-        """Apply all iterations of registration between MERFISH images and CCF images and save the output to
-        output_path/iter{iteration}
+        """Apply all iterations of registration between MERFISH images
+        and CCF images and save the output to output_path/iter{iteration}
         """
-        merfish_images = self.__read_images(self.merfish_files)
-        ccf_images = self.__read_images(self.ccf_files)
+        merfish_images = self._read_images(self.merfish_files)
+        ccf_images = self._read_images(self.ccf_files)
 
         self.iteration_labels = [np.array(labels) for labels in self.iteration_labels]
         num_iter = len(self.iteration_labels)
@@ -569,7 +620,7 @@ class Registration:
             logger.info(f"Running iteration {iteration}")
             iteration_output_path = os.path.join(self.output_path, f"iter{iteration}")
             os.makedirs(iteration_output_path, exist_ok=True)
-            selected_images = self.__select_images_and_labels(
+            selected_images = self._select_images_and_labels(
                 iteration, merfish_images, ccf_images
             )
 

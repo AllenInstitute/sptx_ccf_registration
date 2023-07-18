@@ -1,7 +1,7 @@
 import json
 import logging
 import sys
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from pathlib import Path
 
 import ants
@@ -14,8 +14,7 @@ from sptx_ccf_registration.segmentation.schemas import (
     SegmentationSchema,
     SegmentationSchemaOutput,
 )
-from sptx_ccf_registration.segmentation.segment import SegmentSlice
-from sptx_ccf_registration.segmentation.utils import get_alpha_range
+from sptx_ccf_registration.segmentation.segment import SegmentSlice, get_alpha_range
 from sptx_ccf_registration.utils.file_processing import alpha_to_str, parse_itksnap_file
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
@@ -88,7 +87,9 @@ class Segmentation(ArgSchemaParser):
         return z, segment_slice_obj.segmented_labels_slice, selected_alpha_slice
 
     @staticmethod
-    def create_segment_qc_cache(unsegmented_label, alpha_range, cache_dir):
+    def create_segment_qc_cache(
+        unsegmented_label, alpha_range, cache_dir, n_processes: int = cpu_count()
+    ):
         logger.info(f"Creating segment QC cache into {cache_dir}")
         z_dim = unsegmented_label.shape[2]
         segmented_labels = np.zeros_like(unsegmented_label)
@@ -104,7 +105,7 @@ class Segmentation(ArgSchemaParser):
                 )
             if cache_path.exists():
                 continue
-            with Pool() as pool:
+            with Pool(processes=n_processes) as pool:
                 results = [
                     pool.apply_async(
                         SegmentSliceQC._process_segment_qc_slice,
@@ -137,6 +138,10 @@ class Segmentation(ArgSchemaParser):
         save_alpha_qc = self.args["save_alpha_qc"]
         force_binary_closing = self.args["force_binary_closing"]
         seed = self.args["seed"]
+        n_processes = self.args["n_processes"]
+
+        if n_processes == -1:
+            n_processes = cpu_count()
 
         output_dir.mkdir(exist_ok=True)
 
@@ -168,7 +173,7 @@ class Segmentation(ArgSchemaParser):
 
         z_dim = unsegmented_data.shape[2]
 
-        pool = Pool()
+        pool = Pool(processes=n_processes)
 
         results = []
 
