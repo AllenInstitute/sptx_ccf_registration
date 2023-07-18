@@ -12,8 +12,7 @@
     "ccf_files": {
         "labels_broad": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFGlobWarpedNN.nii.gz",
         "labels_landmark": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFLandmarksGlobWarpedNN_v2.nii.gz",
-        "right_hemisphere": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFRHemiGlobWarped.nii.gz",
-        "atlas": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFAtlasGlobWarped.nii.gz"
+        "right_hemisphere": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFRHemiGlobWarped.nii.gz"
     },
     "labels_level": [0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
     "labels_replace_to": [1, -1, 1, 1, 1, 1, 1, 1, 1, 1],

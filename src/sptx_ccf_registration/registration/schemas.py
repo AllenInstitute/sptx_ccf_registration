@@ -29,7 +29,6 @@ class CCFFilesSchema(ArgSchema):
     right_hemisphere = String(
         required=True, description="Path to the right hemisphere of the CCF data"
     )
-    atlas = String(required=True, description="Path to the atlas of the CCF data")
 
 
 class IterationSchema(ArgSchema):

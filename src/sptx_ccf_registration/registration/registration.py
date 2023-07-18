@@ -414,7 +414,7 @@ class Registration:
             transform_path = self._get_transform_path(z, iteration, transform_type)
             shutil.move(registration[transform_key][transform_index], transform_path)
 
-    def __parallel_create_transforms_slice(self, args) -> None:
+    def _parallel_create_transforms_slice(self, args) -> None:
         """Helper function to parallelize create_transforms_slice"""
         iteration, merfish_slice, ccf_slice, z = args
         self.create_transforms_slice(iteration, merfish_slice, ccf_slice, z)
@@ -457,7 +457,7 @@ class Registration:
             for z in range(num_slices)
         ]
 
-        pool.map(self.__parallel_create_transforms_slice, args)
+        pool.map(self._parallel_create_transforms_slice, args)
         pool.close()
         pool.join()
 
