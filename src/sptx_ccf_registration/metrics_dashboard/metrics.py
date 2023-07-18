@@ -136,8 +136,8 @@ def metrics_df_z_slices(
     mer: Union[str, Path, np.ndarray],
     ccf: Union[str, Path, np.ndarray],
     label_map: dict,
-) -> pd.DataFrame:
-    """Generate a dataframe of the overlap metrics for each section.
+):
+    """Generate a dataframe of the overlap metrics for each section
 
     Parameters
     ----------
@@ -153,34 +153,49 @@ def metrics_df_z_slices(
     pd.DataFrame
         A dataframe containing the overlap metrics for each section.
     """
-    img_mer = mer if isinstance(mer, np.ndarray) else load_nii_gz_image(mer)
-    img_ccf = ccf if isinstance(ccf, np.ndarray) else load_nii_gz_image(ccf)
-
-    data = []
-
+    if isinstance(mer, np.ndarray):
+        img_mer = mer
+        img_ccf = ccf
+    else:
+        img_mer = load_nii_gz_image(mer)
+        img_ccf = load_nii_gz_image(ccf)
+    labels = []
+    z_slices = []
+    dice_scores = []
+    area_mer = []
+    area_ccf = []
+    intersection = []
+    fraction_intersect = []
     for z in range(img_mer.shape[-1]):
         z_mer = img_mer[:, :, z]
         z_ccf = img_ccf[:, :, z]
         if z_mer.sum() > 0:
             label_set = np.unique(z_mer[z_mer != 0])
-            for label in label_set:
-                metrics = overlap_metrics(z_mer == label, z_ccf == label)
-                data.append([label, label_map[label], z, *metrics])
+            labels.extend([label for label in label_set])
+            z_slices.extend([z for _ in label_set])
+            metrics = [
+                overlap_metrics(z_mer == label, z_ccf == label) for label in label_set
+            ]
+            intersection.extend([metric[0] for metric in metrics])
+            area_mer.extend([metric[1] for metric in metrics])
+            area_ccf.extend([metric[2] for metric in metrics])
+            fraction_intersect.extend([metric[3] for metric in metrics])
+            dice_scores.extend([metric[4] for metric in metrics])
+
+    section_set = [label_map[label] for label in labels]
 
     df = pd.DataFrame(
-        data,
-        columns=[
-            "label",
-            "structure",
-            "z-slice",
-            "MERFISH area (pixels)",
-            "CCF area (pixels)",
-            "intersection",
-            "intersection / MERFISH area",
-            "dice coefficient",
-        ],
+        {
+            "label": labels,
+            "structure": section_set,
+            "z-slice": z_slices,
+            "MERFISH area (pixels)": area_mer,
+            "CCF area (pixels)": area_ccf,
+            "intersection": intersection,
+            "intersection / MERFISH area": fraction_intersect,
+            "dice coefficient": dice_scores,
+        }
     )
-
     return df
 
 
