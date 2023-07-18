@@ -8,7 +8,7 @@
         "landmark": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_v2_regapped/CCFOrigMatched/mouse3_v2_CCFLandmarksGlobWarpedNN_v2.nii.gz"
     },
     "label_paths": {
-        "full": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/20230425_registration_input/itksnap_label_description.txt",
+        "full": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/Mouse3_LandmarkReg_04052023/0000_RegistrationInput/itksnap_label_description.txt",
         "broad": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/20230425_registration_input/itksnap_region_label_file.txt",
         "landmark": "/allen/programs/celltypes/workgroups/rnaseqanalysis/mFISH/michaelkunst/MERSCOPES/mouse/atlas/mouse_638850/alignment/20230425_registration_input/itksnap_ccf_landmark_file.txt"
     },
