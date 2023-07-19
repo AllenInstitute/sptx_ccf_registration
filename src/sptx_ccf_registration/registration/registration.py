@@ -152,14 +152,14 @@ class Registration:
         if iteration == 0:
             trans_type = TransformType.SYN.value
             iter_lvl = (40, 20, 10)
-            initial_transform = None
         elif iteration == 1:
             trans_type = TransformType.SYNONLY.value
             iter_lvl = (40, 20, 10)
-            initial_transform = "Identity"
         else:
             trans_type = TransformType.SYNONLY.value
             iter_lvl = (70, 40, 20)
+        initial_transform = None
+        if trans_type == TransformType.SYNONLY.value:
             initial_transform = "Identity"
         return trans_type, iter_lvl, initial_transform
 

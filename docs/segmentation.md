@@ -64,4 +64,49 @@ This method has a radius parameter. This defines the radius of the structural el
 
 ### Plotting
 
-Parameter selection and segmentation evaluation is aided with visualizations. 
+Parameter selection and segmentation evaluation is aided with visualizations.
+
+## Usage
+
+Parameters setup
+
+`python -m sptx_ccf_registration.segmentation --help`
+
+```
+SegmentationSchema:
+  --output_dir OUTPUT_DIR
+                        Output directory. (REQUIRED)
+  --segmented_label_output_file SEGMENTED_LABEL_OUTPUT_FILE
+                        Output file. (REQUIRED)
+  --default_alpha DEFAULT_ALPHA
+                        Default concave hull alpha value if alpha is not selectedthrough optimize_alpha or alpha_selection_path (default=0.2)
+  --optimize_alpha OPTIMIZE_ALPHA
+                        Optimize concave hull alpha parameter for each(z-slice, label) by minimizing difference in area with respective CCF. (default=False)
+  --min_alpha MIN_ALPHA
+                        Lower boundary of search in optimize_alpha. (default=0.04)
+  --max_alpha MAX_ALPHA
+                        Upper boundary of search in optimize_alpha. (default=0.45)
+  --min_points MIN_POINTS
+                        Minimum number of points in a label required for segmentation. (default=10)
+  --sigma SIGMA         Sigma parameter used for gaussian smoothing to estimate densityof each label. For overlapping labels, the densest estimated label isselected. (default=5)
+  --radius RADIUS       Radius parameter used for binary closing to dilate labels. (default=5)
+  --save_alpha_qc SAVE_ALPHA_QC
+                        Whether to save alpha QC images. (default=False)
+  --force_binary_closing FORCE_BINARY_CLOSING
+                        If true, all segmentation will be done using binary_closing insteadof concave hull. All concave hull related parameters will be ignored (default=False)
+  --seed SEED           Seed for random number generator. (default=2021)
+  --n_processes N_PROCESSES
+                        Number of processes to use.If -1, use all available cores. (default=-1)
+
+input_paths:
+  Input files.
+
+  --input_paths.unsegmented_label_file INPUT_PATHS.UNSEGMENTED_LABEL_FILE
+                        Input file. (REQUIRED)
+  --input_paths.ccf_file INPUT_PATHS.CCF_FILE
+                        Path of the CCF file.
+  --input_paths.itksnap_file_path INPUT_PATHS.ITKSNAP_FILE_PATH
+                        Path of the itksnap file.
+  --input_paths.alpha_selection_path INPUT_PATHS.ALPHA_SELECTION_PATH
+                        Path of the alpha selection file.
+```
