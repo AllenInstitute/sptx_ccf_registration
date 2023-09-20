@@ -68,7 +68,12 @@ Parameter selection and segmentation evaluation is aided with visualizations.
 
 ## Usage
 
-Parameters setup
+Parameters setup (ordered by importance)
+
+1. input_paths.unsegmented_label_file (REQUIRED): Input file consisting of the unsegmented nii.gz file consisting of a z-stack of MERFISH labeled cells
+2. output_dir (REQUIRED): Output directory
+3. segmented_label_output_file: Output file with the segmented labels
+4. 
 
 `python -m sptx_ccf_registration.segmentation --help`
 
@@ -78,6 +83,12 @@ SegmentationSchema:
                         Output directory. (REQUIRED)
   --segmented_label_output_file SEGMENTED_LABEL_OUTPUT_FILE
                         Output file. (REQUIRED)
+  --input_json INPUT_JSON
+                        file path of input json file
+  --output_json OUTPUT_JSON
+                        file path to output json file
+  --log_level LOG_LEVEL
+                        set the logging level of the module (default=INFO)
   --default_alpha DEFAULT_ALPHA
                         Default concave hull alpha value if alpha is not selectedthrough optimize_alpha or alpha_selection_path (default=0.2)
   --optimize_alpha OPTIMIZE_ALPHA
@@ -88,12 +99,14 @@ SegmentationSchema:
                         Upper boundary of search in optimize_alpha. (default=0.45)
   --min_points MIN_POINTS
                         Minimum number of points in a label required for segmentation. (default=10)
-  --sigma SIGMA         Sigma parameter used for gaussian smoothing to estimate densityof each label. For overlapping labels, the densest estimated label isselected. (default=5)
+  --sigma SIGMA         Sigma parameter used for gaussian smoothing to estimate densityof each label. For overlapping labels, the densest estimated label
+                        isselected. (default=5)
   --radius RADIUS       Radius parameter used for binary closing to dilate labels. (default=5)
   --save_alpha_qc SAVE_ALPHA_QC
                         Whether to save alpha QC images. (default=False)
   --force_binary_closing FORCE_BINARY_CLOSING
-                        If true, all segmentation will be done using binary_closing insteadof concave hull. All concave hull related parameters will be ignored (default=False)
+                        If true, all segmentation will be done using binary_closing insteadof concave hull. All concave hull related parameters will be ignored
+                        (default=False)
   --seed SEED           Seed for random number generator. (default=2021)
   --n_processes N_PROCESSES
                         Number of processes to use.If -1, use all available cores. (default=-1)
@@ -104,9 +117,10 @@ input_paths:
   --input_paths.unsegmented_label_file INPUT_PATHS.UNSEGMENTED_LABEL_FILE
                         Input file. (REQUIRED)
   --input_paths.ccf_file INPUT_PATHS.CCF_FILE
-                        Path of the CCF file.
+                        Path of the CCF file. Requiredonly if `save_alpha_qc = True`
   --input_paths.itksnap_file_path INPUT_PATHS.ITKSNAP_FILE_PATH
-                        Path of the itksnap file.
+                        Path of the itksnap file.Required only if `save_alpha_qc = True`
   --input_paths.alpha_selection_path INPUT_PATHS.ALPHA_SELECTION_PATH
-                        Path of the alpha selection file.
+                        Path of the alpha selection file. Used to manuallyselect alpha values for each (z, label)See example file
+                        atsample_config/Mouse3_Landmark_patched_v2_alpha_selection_all.json
 ```

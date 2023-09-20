@@ -257,12 +257,13 @@ class Segmentation(ArgSchemaParser):
             output_dict["alpha_qc_dir"] = str(alpha_qc_dir)
 
         # save input arguments to segmentation_input.json
-        input_json_path = output_dir / "segmentation_input.json"
+        file_prefix = self.args["input_json"].split("/")[-1].split(".")[0]
+        input_json_path = output_dir / f"{file_prefix}_input.json"
         with open(input_json_path, "w") as f:
             json.dump(self.args, f, indent=4)
 
         # save output arguments to registration_output.json
-        self.args["output_json"] = output_dir / "registration_output.json"
+        self.args["output_json"] = output_dir / f"{file_prefix}_output.json"
         self.output(output_dict, indent=4)
 
 

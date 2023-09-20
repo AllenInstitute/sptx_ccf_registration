@@ -1,17 +1,29 @@
 from argschema import ArgSchema
 from argschema.fields import Bool, Float, Int, Nested, String
+from argschema.schemas import DefaultSchema
 
 
-class InputPaths(ArgSchema):
+class InputPaths(DefaultSchema):
     unsegmented_label_file = String(required=True, description="Input file.")
-    ccf_file = String(required=False, description="Path of the CCF file.")
-    itksnap_file_path = String(required=False, description="Path of the itksnap file.")
+    ccf_file = String(
+        required=False,
+        description="Path of the CCF file. Required" "only if `save_alpha_qc = True`",
+    )
+    itksnap_file_path = String(
+        required=False,
+        description="Path of the itksnap file."
+        "Required only if `save_alpha_qc = True`",
+    )
     alpha_selection_path = String(
-        required=False, description="Path of the alpha selection file."
+        required=False,
+        description="Path of the alpha selection file. Used to manually"
+        "select alpha values for each (z, label)"
+        "See example file at"
+        "sample_config/Mouse3_Landmark_patched_v2_alpha_selection_all.json",
     )
 
 
-class SegmentationSchemaOutput(ArgSchema):
+class SegmentationSchemaOutput(DefaultSchema):
     segmented_label_output_file = String(required=True, description="Output file.")
     selected_alpha = String(
         required=False,
@@ -65,3 +77,4 @@ class SegmentationSchema(ArgSchema):
         default=-1,
         description="Number of processes to use." "If -1, use all available cores.",
     )
+    log_level = String(default="INFO", description="set the logging level of the module")

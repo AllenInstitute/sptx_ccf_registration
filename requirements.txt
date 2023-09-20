@@ -4,4 +4,5 @@ argschema
 antspyx
 alphashape
 rasterio
+bs4
 neuroglancer_formatting_scripts @ git+https://github.com/AllenInstitute/neuroglancer_formatting_scripts.git@prototype.230711#egg=neuroglancer_formatting_scripts

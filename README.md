@@ -42,6 +42,6 @@ Here are examples of launching the modules with the input_json files.
 ```
 python -m sptx_ccf_registration.segmentation --input_json sample_config/segmentation/segmentation_broad.json
 python -m sptx_ccf_registration.segmentation --input_json sample_config/segmentation/segmentation_landmark.json
-python -m sptx_ccf_registration.registration --input_json sample_config/segmentation/registration.json
-python -m sptx_ccf_registration.metrics_dashboard --input_json sample_config/segmentation/metrics_dashboard.json
+python -m sptx_ccf_registration.registration --input_json sample_config/registration/registration.json
+python -m sptx_ccf_registration.metrics_dashboard --input_json sample_config/metrics_dashboard/metrics_dashboard.json
 ```

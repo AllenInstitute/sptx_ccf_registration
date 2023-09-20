@@ -47,4 +47,4 @@ def test_dice_coefficient():
 def test_parse_itksnap_file():
     itksnap_file_path = Path("tests/sample_data/itksnap_ccf_landmark_file.txt")
     result = parse_itksnap_file(itksnap_file_path)
-    assert result[51] == 'AD - 64'
+    assert result[51] == "AD - 64"

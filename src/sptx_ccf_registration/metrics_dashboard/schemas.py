@@ -1,18 +1,19 @@
 from argschema import ArgSchema
 from argschema.fields import Int, Nested, String
+from argschema.schemas import DefaultSchema
 
 
-class LabelPaths(ArgSchema):
+class LabelPaths(DefaultSchema):
     full = String(required=True, description="Path to full itksnap labels")
     broad = String(required=True, description="Path to broad itksnap labels")
     landmark = String(required=True, description="Path to landmark itksnap labels")
 
 
-class GenerateMetricsDashboardOutputSchema(ArgSchema):
+class GenerateMetricsDashboardOutputSchema(DefaultSchema):
     dashboard_path = String(required=True, description="Path to metrics dashboard")
 
 
-class CCFFilesSchema(ArgSchema):
+class CCFFilesSchema(DefaultSchema):
     full = String(required=True, description="Path to full CCF image")
     atlas = String(required=True, description="Path to atlas CCF image")
     broad = String(required=True, description="Path to broad CCF image")
@@ -36,3 +37,4 @@ class GenerateMetricsDashboardSchema(ArgSchema):
         description="Number of processors to use for"
         "multiprocessing. -1 uses all available processors.",
     )
+    log_level = String(default="INFO", description="set the logging level of the module")

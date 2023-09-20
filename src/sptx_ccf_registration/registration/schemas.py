@@ -1,8 +1,9 @@
 from argschema import ArgSchema
 from argschema.fields import Int, List, Nested, String
+from argschema.schemas import DefaultSchema
 
 
-class MERFISHFilesSchema(ArgSchema):
+class MERFISHFilesSchema(DefaultSchema):
     labels_broad_segmented = String(
         required=True, description="Path to the segmented broad labels for MERFISH"
     )
@@ -21,7 +22,7 @@ class MERFISHFilesSchema(ArgSchema):
     )
 
 
-class CCFFilesSchema(ArgSchema):
+class CCFFilesSchema(DefaultSchema):
     labels_broad = String(required=True, description="Path to the broad labels for CCF")
     labels_landmark = String(
         required=True, description="Path to the landmark labels for CCF"
@@ -31,12 +32,12 @@ class CCFFilesSchema(ArgSchema):
     )
 
 
-class IterationSchema(ArgSchema):
+class IterationSchema(DefaultSchema):
     iter_num = Int(required=True, description="Iteration of registration")
     registered_files = Nested(MERFISHFilesSchema, description="Registered MERFISH files")
 
 
-class RegistrationOutputSchema(ArgSchema):
+class RegistrationOutputSchema(DefaultSchema):
     iteration = List(
         Nested(IterationSchema),
         description="Registered MERFISH files for each iteration",
@@ -76,3 +77,4 @@ class RegistrationSchema(ArgSchema):
         default=-1,
         description="Number of processes to use." "If -1, use all available cores.",
     )
+    log_level = String(default="INFO", description="set the logging level of the module")
