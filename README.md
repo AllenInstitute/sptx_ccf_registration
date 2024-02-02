@@ -7,6 +7,9 @@ sptx_ccf_registration is an image processing pipeline for registering spatial tr
 2. **Registration** of MERFISH labels to CCF labels
 3. **Dashboard** for analyzing the registration through metrics and image visualization
 
+![image](https://github.com/AllenInstitute/sptx_ccf_registration/assets/10882060/7957ae86-5508-47fd-b2b8-daa9d7c74362)
+
+
 ## Installation
 1. Clone this repository:
    ```
