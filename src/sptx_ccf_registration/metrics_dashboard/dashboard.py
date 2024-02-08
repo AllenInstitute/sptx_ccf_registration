@@ -93,7 +93,7 @@ def create_format_configs_from_inputs(
             )
         config_file = Path(config_path) / f"{file_prefix}{iter}.json"
         with open(config_file, "w") as f:
-            json.dump(format_config, f)
+            json.dump(format_config, f, indent=4)
         config_file_paths.append(config_file)
     return config_file_paths
 
