@@ -17,5 +17,7 @@ setup(
     license=license,
     packages=find_packages(where="src"),
     package_dir={"": "src"},
+    package_data={"sptx_ccf_registration.metrics_dashboard": ["ccf_merfish_metrics/requirements.txt", "ccf_merfish_metrics/app.py", "ccf_merfish_metrics/Procfile", "ccf_merfish_metrics/templates/index.html"]},
+    include_package_data=True,
     install_requires=required,
 )
